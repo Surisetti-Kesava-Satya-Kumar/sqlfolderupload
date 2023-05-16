@@ -13,20 +13,11 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Set up Azure PowerShell
-        uses: azure/setup-azurerm@v1
+      - name: Set up Azure CLI
+        uses: azure/login@v1
         with:
-          azpsVersion: '3.10.0'
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
 
       - name: Upload SQL files to Azure Synapse
         run: |
-          $storageAccountName = "satyadldemo"
-          $containerName = "satyadlfs"
-          $localFolderPath = "/sqlfiles"
-          $context = New-AzStorageContext -StorageAccountName $storageAccountName -StorageAccountKey $env:AZURE_STORAGE_KEY
-
-          Get-ChildItem -Path $localFolderPath -Filter "*.sql" -File -Recurse | ForEach-Object {
-              $blobPath = $_.FullName.Replace($localFolderPath, "").TrimStart("/")
-              $blobName = $_.Name
-              Set-AzStorageBlobContent -Container $containerName -File $_.FullName -Blob "$blobPath/$blobName" -Context $context
-          }
+          az storage blob upload-batch --account-name satyadldemo --account-key ${{ secrets.AZURE_STORAGE_KEY }} --destination-container satyadlfs --source "sqlfiles"
