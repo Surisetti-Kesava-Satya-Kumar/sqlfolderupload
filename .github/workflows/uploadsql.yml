@@ -21,6 +21,6 @@ jobs:
       - name: Upload SQL files to Azure Synapse
         run: |
           for file in sqlfiles/*.sql; do
-            az synapse sql pool sql-uploaded-scripts create --workspace-name satya-synapse-demo --sql-pool-name "Built-in" --database-name "RAMS-demo" --name "$(basename "$file")" --definition-file "$file"
+            az synapse sql pool sql-uploaded-script create --workspace-name satya-synapse-demo --sql-pool-name "Built-in" --database-name "RAMS-demo" --name "$(basename "$file")" --definition-file "$file"
           done
 
